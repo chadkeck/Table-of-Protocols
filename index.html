@@ -1,0 +1,290 @@
+<!doctype html>
+
+<html>
+	<head>
+		<title>The Table of Protocols</title>
+		<script language="javascript" type="text/javascript" src="js/jquery-1.4.4.min.js"></script>
+		<script language="javascript" type="text/javascript" src="js/jquery-ui-1.8.9.min.js"></script>
+		<script language="javascript" type="text/javascript" src="js/isotope/jquery.isotope.min.js"></script>
+		<script language="javascript" type="text/javascript" src="js/list_of_protocols.js"></script>
+		<link rel="stylesheet" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.9/themes/vader/jquery-ui.css" type="text/css" media="all" /> 
+
+		<style type="text/css">
+			/* start isotope animation css */
+			.isotope,
+			.isotope .isotope-item {
+				/* change duration value to whatever you like */
+				-webkit-transition-duration: 0.6s;
+				-moz-transition-duration: 0.6s;
+				transition-duration: 0.6s;
+			}
+
+			.isotope {
+				-webkit-transition-property: height, width;
+				-moz-transition-property: height, width;
+				transition-property: height, width;
+			}
+
+			.isotope .isotope-item {
+				-webkit-transition-property: -webkit-transform, opacity;
+				-moz-transition-property:    -moz-transform, opacity;
+				transition-property:         transform, opacity;
+			}
+			/* end isotope animation css */
+
+			/* start isotope filtering */
+			.isotope-item {
+				z-index: 2;
+			}
+
+			.isotope-hidden.isotope-item {
+				pointer-events: none;
+				z-index: 1;
+			}
+			/* end isotope filtering */
+
+			a {
+				color: #fff;
+				text-decoration: none;
+			}
+
+			a:hover {
+				text-decoration: underline;
+			}
+
+			#details {
+				padding-left: 12px;
+				color: white;
+			}
+
+			#selected_label {
+				font-size: 1.6em;
+			}
+
+			#selected_label_layers {
+				font-size: 0.8em;
+				padding-left: 8px;
+				color: #aaa;
+			}
+
+			body {
+				font-family: Helvetica, Arial, sans-serif;
+				background-color: #333;
+			}
+
+			#container {
+				/*border: 1px solid #444;*/
+				margin-top: 8px;
+			}
+
+			.item {
+				border-top-right-radius: 8px;
+				border-bottom-left-radius: 10px;
+				/*
+				border-radius: 8px;
+				*/
+				color: white;
+
+				width: 90px;
+				height: 90px;
+				line-height: 90px;
+				margin: 3px;
+				text-align: center;
+			}
+
+			.layer_2 {
+				background: #FF9801; /* old browsers */
+				background: -moz-linear-gradient(top, #FF9801 0%, #FF7E00 49%, #FF7300 50%, #FF6701 100%); /* firefox */
+				background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#FF9801), color-stop(49%,#FF7E00), color-stop(50%,#FF7300), color-stop(100%,#FF6701)); /* webkit */
+				filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#FF9801', endColorstr='#FF6701',GradientType=0 ); /* ie */
+			}
+
+			.layer_3 {
+				background: #B85059; /* old browsers */
+				background: -moz-linear-gradient(top, #B85059 0%, #B03536 49%, #A10F11 50%, #A6140B 100%); /* firefox */
+				background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#B85059), color-stop(49%,#B03536), color-stop(50%,#A10F11), color-stop(100%,#A6140B)); /* webkit */
+				filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#B85059', endColorstr='#A6140B',GradientType=0 ); /* ie */
+			}
+
+			.layer_4 {
+				background: #88BB8A; /* old browsers */
+				background: -moz-linear-gradient(top, #88BB8A 0%, #37A141 49%, #0C9E19 50%, #0AA630 100%); /* firefox */
+				background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#88BB8A), color-stop(49%,#37A141), color-stop(50%,#0C9E19), color-stop(100%,#0AA630)); /* webkit */
+				filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#88BB8A', endColorstr='#0AA630',GradientType=0 ); /* ie */
+			}
+
+			.layer_5 {
+				background: #6C6F74; /* old browsers */
+				background: -moz-linear-gradient(top, #6C6F74 0%, #282E37 49%, #171F29 50%, #282E38 100%); /* firefox */
+				background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#6C6F74), color-stop(49%,#282E37), color-stop(50%,#171F29), color-stop(100%,#282E38)); /* webkit */
+				filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#6C6F74', endColorstr='#282E38',GradientType=0 ); /* ie */
+			}
+
+			.layer_7 {
+				background: #8F9ED5; /* old browsers */
+				background: -moz-linear-gradient(top, #8F9ED5 0%, #344DB6 49%, #1633AB 50%, #1B59B8 100%); /* firefox */
+				background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#8F9ED5), color-stop(49%,#344DB6), color-stop(50%,#1633AB), color-stop(100%,#1B59B8)); /* webkit */
+				filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#8F9ED5', endColorstr='#1B59B8',GradientType=0 ); /* ie */
+			}
+		</style> 
+		<script>
+			function random_int( max ) {
+				var s = Math.floor( Math.random() * max );
+				return s;
+				//console.log( s );
+			}
+
+			function filter_items( filter_text ) {
+				console.log( filter_text );
+
+				if( filter_text.lenth == 0 ) {
+					$( '#container' ).isotope( { filter: '*' } );
+				} else {
+					var filter_string = "*.protocol_" + filter_text + "*";
+					console.log( filter_string );
+					$( '#container' ).isotope( { filter: filter_string } );
+				}
+			}
+
+			function css_class_name_from_layers( layers ) {
+				var class_string = ""
+				for ( var layer in layers ) {
+					class_string += 'layer_' + layers[layer] + ' ';
+				}
+				return class_string;
+				/*
+				layer = proto.layers.join( '_' );
+				return 'layer_' + layer;
+				*/
+			}
+
+			function css_class_name_from_proto( proto_name ) {
+				return 'protocol_' + proto_name;
+			}
+
+			function load_protocols() {
+				var code;
+				for( var i in g_protocols ) {
+					proto = g_protocols[i];
+					layer_name = css_class_name_from_layers( proto.layers );
+					//class_name = css_class_name_from_proto( proto.name );
+					//code += '<div class="item ' + layer_name + ' ' + class_name + '">' + proto.name + '</div>';
+					code += '<div class="item ' + layer_name + '"><a href="' + proto.url + '">' + proto.name + '</a></div>';
+				}
+				//console.log( code );
+				var to_add = $( code );
+				//$( '#container' ).isotope( 'insert', to_add );
+				$( '#container' ).append( to_add );
+			}
+
+			function item_from_name( name ) {
+				for( var i in g_protocols ) {
+					proto = g_protocols[i];
+					if( name == proto.name ) {
+						return proto;
+					}
+				}
+			}
+
+			function random_letter() {
+				var alphabet = 'abcdefghijklmnopqrstuvwxyz';
+				var i = random_int( 26 );
+				return alphabet[i];
+			}
+
+			function addItems() {
+				for( var i=0; i<10; i++ ) {
+					addItem();
+					//setTimeout( addItem, 1000 );
+				}
+			}
+
+			function addItem() {
+				var random_r = random_int( 255 );
+				var random_g = random_int( 255 );
+				var random_b = random_int( 255 );
+				var letter = random_letter();
+				var class_name = "letter_" + letter;
+
+				var css = '<div class="item ';
+				css += class_name + '"';
+				css += ' style="background-color: rgb( ';
+				css += random_r + ', ';
+				css += random_g + ', ';
+				css += random_b + ')">';
+				css += letter + '</div>';
+				//console.log( css );
+
+				var to_add = $( css );
+				$( '#container' ).isotope( 'insert', to_add );
+			}
+		</script>
+	</head>
+
+	<body>
+		<span id="repeat">
+			<input type="radio" id="layer_filter_all" checked="checked" name="repeat" data-filter="*" /><label for="layer_filter_all">All Layers</label>
+			<input type="radio" id="layer_filter_1" name="repeat" data-filter=".layer_1" /><label for="layer_filter_1">1</label>
+			<input type="radio" id="layer_filter_2" name="repeat" data-filter=".layer_2" /><label for="layer_filter_2">2</label>
+			<input type="radio" id="layer_filter_3" name="repeat" data-filter=".layer_3" /><label for="layer_filter_3">3</label>
+			<input type="radio" id="layer_filter_4" name="repeat" data-filter=".layer_4" /><label for="layer_filter_4">4</label>
+			<input type="radio" id="layer_filter_5" name="repeat" data-filter=".layer_5" /><label for="layer_filter_5">5</label>
+			<input type="radio" id="layer_filter_6" name="repeat" data-filter=".layer_6" /><label for="layer_filter_6">6</label>
+			<input type="radio" id="layer_filter_7" name="repeat" data-filter=".layer_7" /><label for="layer_filter_7">7</label>
+		</span>
+
+		<span id="details">
+			<label id="selected_label"></label>
+			<label id="selected_label_layers"></label>
+		</span>
+
+		<div id="container"></div>
+
+
+		<script>
+			$( function() {
+				$( '#repeat' ).buttonset();
+				$( '#repeat' ).change( function() {
+					var selector = $( 'input[name="repeat"]:checked' ).attr( 'data-filter' );
+					$( '#container' ).isotope( { filter: selector } );
+				} );
+
+				load_protocols();
+
+				$( '#container' ).isotope( {
+					itemSelector: '.item'
+				} );
+
+				//$( "#layer_filter_7" ).raptorize();
+
+				$( "#filter" ).keyup( function( e ) {
+					//code = (e.keyCode ? e.keyCode : e.which);
+					filter_items( $(this).val() );
+				} );
+
+				$( '.item' ).live( 'mouseover mouseout',
+					function( event ) {
+						if( event.type == 'mouseover' ) {
+							name = event.srcElement.outerText;
+							item = item_from_name( name );
+							layer_description = "Layer: " + item.layers.join( ', ' );
+							if( item.description ) {
+								$( '#selected_label' ).html( item.description );
+								$( '#selected_label_layers' ).html( layer_description );
+							} else {
+								$( '#selected_label' ).html( '' );
+								$( '#selected_label_layers' ).html( '' );
+							}
+						} else {
+							$( '#selected_label' ).html( '' );
+							$( '#selected_label_layers' ).html( '' );
+						}
+					}
+				);
+
+
+			} );
+		</script>
+	</body>
+
+</html>
